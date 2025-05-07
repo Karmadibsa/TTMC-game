@@ -1,0 +1,38 @@
+<!-- src/app/components/game-board/game-board.component.html -->
+<div class="game-board-outer-container">
+  <div class="game-board-container">
+    <!-- #boardGridElement est la référence pour calculer les positions précises des pions -->
+    <div class="board-grid" #boardGridElement [ngStyle]="boardStyle">
+
+      <!-- Affichage des cases du plateau -->
+      <!-- Utilisation de la nouvelle syntaxe @for pour les cases -->
+      @for (currentCase of cases; track currentCase.id) {
+        <app-case [caseData]="currentCase"></app-case>
+      } @empty {
+        <p>Chargement du plateau...</p> <!-- Message si les cases ne sont pas encore là -->
+      }
+
+      <!-- Affichage des pions des équipes -->
+      <!-- Utilisation de la nouvelle syntaxe @for pour les pions -->
+      @for (team of teams; track team.id) {
+        <app-pawn
+          [teamData]="team"
+          [position]="getPawnPosition(team.id)"> <!-- Passe team.id pour récupérer la position stockée -->
+        </app-pawn>
+      }
+      <!-- Pas de @empty ici, car s'il n'y a pas d'équipes, rien ne s'affiche, ce qui est correct -->
+    </div>
+  </div>
+
+  <!-- Barre de contrôle des équipes -->
+  <app-team-control-bar
+    [teams]="teams"
+    (addTeamRequest)="handleAddNewTeamRequest()"
+    (removeTeamRequest)="handleRemoveTeamRequest($event)"
+    (updateTeamNameRequest)="handleUpdateTeamNameRequest($event)"
+    (updateTeamColorRequest)="handleUpdateTeamColorRequest($event)"
+    (moveTeamRequest)="handleMoveTeamRequest($event)"
+    (updateTeamIconRequest)="handleUpdateTeamIconRequest($event)"
+    (resetTeamsRequest)="handleResetTeamsRequest()">
+  </app-team-control-bar>
+</div>

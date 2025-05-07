@@ -1,0 +1,9 @@
+<!-- src/app/components/pawn/pawn.component.html -->
+@if (teamData) {
+  <div
+    class="pawn-container-round"
+    [ngStyle]="pawnStyle"
+    [title]="teamData.name + ' (Pion)'">
+    <mat-icon class="pawn-icon-round">{{ teamData.icon }}</mat-icon>
+  </div>
+}

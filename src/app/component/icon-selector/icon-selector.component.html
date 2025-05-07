@@ -1,0 +1,20 @@
+<!-- src/app/components/icon-selector/icon-selector.component.html -->
+<div class="icon-selector-wrapper">
+  <select
+    class="native-icon-select"
+    [(ngModel)]="selectedIcon"
+    (ngModelChange)="selectedIconChange.emit($event)"
+    title="Choisir une icône">
+    <!-- La première option peut être un placeholder ou l'icône actuelle si on veut -->
+    <!-- Pour la simplicité, on liste directement les icônes -->
+    @for (icon of icons; track icon) {
+      <option [value]="icon">
+        {{ icon}} <!-- Affiche le nom de l'icône formaté -->
+      </option>
+    }
+  </select>
+  <!-- Prévisualisation de l'icône sélectionnée à côté du select -->
+  @if (selectedIcon) {
+    <mat-icon class="selected-icon-preview-native">{{ selectedIcon }}</mat-icon>
+  }
+</div>

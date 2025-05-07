@@ -1,0 +1,130 @@
+// src/app/components/case/case.component.scss
+
+.case {
+  display: flex; // Pour centrer .case-content
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  text-align: center;
+  height: 100%; // La case doit remplir sa cellule de grille
+  width: 100%;  // La case doit remplir sa cellule de grille
+
+  // L'ombre et les transitions s'appliquent à la forme découpée
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  // overflow: visible; // Peut être utile si les pointes dépassent légèrement, mais clip-path devrait gérer cela.
+  // Si vous avez des problèmes de coupure, essayez de le décommenter.
+
+  // Styles pour l'image de fond principale (sera clippée par clip-path)
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.01); // Légère mise à l'échelle pour un effet 3D
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  // Conteneur interne pour le contenu, pour éviter qu'il soit coupé par clip-path
+  .case-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; // Centrer verticalement et horizontalement
+    position: relative; // Pour s'assurer que le contenu est au-dessus du background de .case
+    z-index: 1;
+    // Le padding horizontal doit laisser de la place pour les "pointes" ou "entailles"
+    // Si la profondeur de la pointe est de 15%, un padding d'environ 16-18% est bon.
+    padding: 5px 18%; // Ajustez ce padding horizontal si la forme de la flèche change
+  }
+
+  .case-icon {
+    font-size: 22px; // Ajustez selon la taille de vos cases
+    margin-bottom: 3px;
+    text-shadow: 0px 0px 4px rgba(0,0,0,0.6); // Pour la lisibilité sur fonds variés
+  }
+
+  .case-title {
+    font-weight: bold;
+    font-size: 10px; // Ajustez pour que le texte ne déborde pas
+    line-height: 1.2;
+    text-shadow: 0px 0px 3px rgba(0,0,0,0.5);
+    // S'assurer que le texte ne prend pas trop de place
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis; // Si le titre est trop long
+    white-space: nowrap; // Pour une seule ligne, ou 'normal' pour plusieurs avec ajustement de hauteur.
+    // Si 'normal', ajustez la hauteur de la case ou du conteneur de titre.
+  }
+
+  .case-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    opacity: 0.6; // Ajustez pour la discrétion
+    z-index: 0; // Derrière .case-content
+  }
+
+  // --- Définitions des formes avec clip-path ---
+  // Profondeur de la pointe/entaille (ex: 15%)
+  $arrow-depth: 15%;
+  $arrow-opposite-depth: 100% - $arrow-depth;
+
+  // Forme par défaut (rectangle avec coins arrondis)
+  &.shape-normal, &:not([class*="shape-"]) {
+    border-radius: 8px; // Les coins arrondis sont OK pour la forme normale
+    .case-content {
+      padding: 8px; // Padding normal pour une case rectangulaire
+    }
+  }
+
+  // Entaille à gauche, Pointe à droite (pour progression G -> D)
+  &.shape-points-right {
+    clip-path: polygon($arrow-depth 0%, 100% 0%, $arrow-opposite-depth 50%, 100% 100%, $arrow-depth 100%, 0% 50%);
+  }
+
+  // Pointe à gauche, Entaille à droite (pour progression D -> G)
+  &.shape-points-left {
+    clip-path: polygon(0% 0%, $arrow-opposite-depth 0%, 100% 50%, $arrow-opposite-depth 100%, 0% 100%, $arrow-depth 50%);
+  }
+
+  // Rectangle à gauche, Pointe à droite (début de ligne G -> D)
+  &.shape-start-right {
+    clip-path: polygon(0% 0%, 100% 0%, $arrow-opposite-depth 50%, 100% 100%, 0% 100%);
+    .case-content { // Moins de padding à gauche car pas d'entaille
+      padding-left: 8px;
+    }
+  }
+
+  // Entaille à gauche, Rectangle à droite (fin de ligne G -> D)
+  &.shape-end-right {
+    clip-path: polygon($arrow-depth 0%, 100% 0%, 100% 100%, $arrow-depth 100%, 0% 50%);
+    .case-content { // Moins de padding à droite car pas de pointe
+      padding-right: 8px;
+    }
+  }
+
+  // Rectangle à droite, Pointe à gauche (début de ligne D -> G)
+  &.shape-start-left {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, $arrow-depth 50%);
+    .case-content { // Moins de padding à droite car pas d'entaille
+      padding-right: 8px;
+    }
+  }
+
+  // Entaille à droite, Rectangle à gauche (fin de ligne D -> G)
+  &.shape-end-left {
+    clip-path: polygon(0% 0%, $arrow-opposite-depth 0%, 100% 50%, $arrow-opposite-depth 100%, 0% 100%);
+    .case-content { // Moins de padding à gauche car pas de pointe
+      padding-left: 8px;
+    }
+  }
+}

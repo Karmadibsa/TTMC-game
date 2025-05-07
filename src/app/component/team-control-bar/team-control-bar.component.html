@@ -1,0 +1,74 @@
+<!-- src/app/components/team-control-bar/team-control-bar.component.html -->
+<div class="control-bar-container">
+  <div class="teams-controls-scrollable-area modern-scrollbar">
+    @for (team of teams; track team.id) {
+      <div class="team-control-card" [style.border-left-color]="team.color">
+
+        <input
+          type="text"
+          [ngModel]="team.name"
+          (ngModelChange)="updateTeamNameRequest.emit({id: team.id, name: $event})"
+          class="team-name-input-header"
+          placeholder="Nom de l'équipe...">
+
+
+        <!-- 2. Sélecteurs de couleur et d'icône -->
+        <div class="pickers-container">
+          <label class="color-picker-label-simple" [style.background-color]="team.color" title="Changer la couleur">
+            <input
+              type="color"
+              [ngModel]="team.color"
+              (ngModelChange)="updateTeamColorRequest.emit({id: team.id, color: $event})"
+              class="team-color-picker-input">
+          </label>
+          <app-icon-selector
+            [selectedIcon]="team.icon"
+            (selectedIconChange)="onTeamIconChange(team.id, $event)">
+          </app-icon-selector>
+        </div>
+
+        <!-- 3. & 4. Actions de déplacement et bouton de suppression sur la même ligne -->
+        <div class="team-actions-row">
+          <div class="move-controls">
+            <button (click)="onMoveTeamStep(team.id, -1)" class="action-btn step-btn decrease-btn" title="Reculer d'une case">
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+            @if (team.position !== undefined) {
+              <span class="team-position-display">{{ team.position }}</span>
+            } @else {
+              <span class="team-position-display">0</span>
+            }
+            <button (click)="onMoveTeamStep(team.id, 1)" class="action-btn step-btn increase-btn" title="Avancer d'une case">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </div>
+
+          <button (click)="onRemoveTeam(team.id, team.name)" class="action-btn remove-btn-icon-only" title="Supprimer cette équipe">
+            <mat-icon>delete_outline</mat-icon> <!-- Icône poubelle -->
+          </button>
+        </div>
+
+      </div>
+    } @empty {
+      <p class="empty-teams-message">Pas d'équipes</p>
+    }
+  </div>
+
+  <!-- ... (boutons globaux d'ajout et reset - inchangés) ... -->
+  <div class="global-actions-container">
+    <button
+      (click)="onAddTeam()"
+      class="add-team-global-btn-compact"
+      title="Ajouter une nouvelle équipe"
+      aria-label="Ajouter une nouvelle équipe">
+      <mat-icon>group_add</mat-icon>
+    </button>
+    <button
+      (click)="onResetAllTeams()"
+      class="reset-teams-global-btn-styled"
+      title="Réinitialiser toutes les équipes"
+      aria-label="Réinitialiser toutes les équipes">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+</div>

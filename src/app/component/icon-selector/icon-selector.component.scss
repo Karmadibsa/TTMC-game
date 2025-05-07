@@ -1,0 +1,44 @@
+// src/app/components/icon-selector/icon-selector.component.scss
+
+// Utilise les variables CSS globales définies dans src/styles.scss :root {}
+// Ex: var(--input-bg-color), var(--text-color-light), etc.
+
+.icon-selector-wrapper {
+  display: inline-flex; // Aligne le select et l'icône de prévisualisation
+  align-items: center;
+  gap: 8px; // Espace entre le select et l'icône de prévisualisation
+}
+
+.native-icon-select {
+  background-color: var(--bg-color-input); // Utilise ta variable globale
+  color: var(--text-color-light);        // Utilise ta variable globale
+  border: 1px solid var(--border-color-light); // Utilise ta variable globale
+  border-radius: var(--border-radius-small); // Utilise ta variable globale
+  padding: 7px 10px; // Ajuster pour la hauteur et l'apparence
+  font-size: 0.9em;
+  cursor: pointer;
+  height: 38px; // Pour s'aligner avec d'autres inputs si besoin
+  min-width: 120px; // Largeur minimale pour afficher un peu de texte
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent-color-primary); // Utilise ta variable globale
+    box-shadow: 0 0 0 2px rgba(var(--accent-color-primary), 0.3); // Aura de focus
+  }
+
+  option {
+    // Sur certains navigateurs, on peut styler un peu les options, sur d'autres non.
+    background-color: var(--bg-color-input); // Fond des options
+    color: var(--text-color-light);        // Texte des options
+  }
+}
+
+.selected-icon-preview-native {
+  font-size: 22px; // Taille de l'icône de prévisualisation
+  color: var(--text-color-light); // Couleur de l'icône de prévisualisation
+  line-height: 1;
+  // On peut ajouter un fond si on veut qu'elle ressemble à un bouton
+  // background-color: var(--bg-color-input);
+  // padding: 6px;
+  // border-radius: var(--border-radius-round);
+}

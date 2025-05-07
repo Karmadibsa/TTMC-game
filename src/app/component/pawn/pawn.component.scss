@@ -1,0 +1,62 @@
+// src/app/components/pawn/pawn.component.scss
+
+// Variables spécifiques au composant Pawn, encapsulées ici
+:host {
+  --pawn-actual-size: 40px;        // Taille effective du cercle du pion
+  --pawn-icon-display-size: 24px;  // Taille de l'icône Material à l'intérieur
+  --pawn-icon-color: white;        // Couleur de l'icône
+  --pawn-border-color: rgba(255, 255, 255, 0.5); // Bordure blanche semi-transparente
+  --pawn-border-width: 2px;
+  --pawn-shadow-main: 0 3px 6px rgba(0, 0, 0, 0.25);
+  --pawn-shadow-inset: inset 0 1px 1px rgba(255, 255, 255, 0.2); // Léger reflet interne
+  --pawn-icon-shadow: 0 1px 2px rgba(0,0,0,0.5); // Ombre pour l'icône elle-même
+
+  // Pour la transition (vient de ton code précédent)
+  --pawn-transition-duration: 0.35s;
+  --pawn-transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  --pawn-transform-transition-duration: 0.2s;
+  --pawn-transform-transition-timing-function: ease-out;
+}
+
+.pawn-container-round {
+  position: absolute;
+  z-index: 20; // S'assurer qu'il est au-dessus des cases
+  cursor: grab;
+  user-select: none; // Empêche la sélection de texte sur le pion
+
+  // Applique les transitions pour le mouvement et la transformation au survol
+  transition: left var(--pawn-transition-duration) var(--pawn-transition-timing-function),
+  top var(--pawn-transition-duration) var(--pawn-transition-timing-function),
+  transform var(--pawn-transform-transition-duration) var(--pawn-transform-transition-timing-function),
+  box-shadow var(--pawn-transform-transition-duration) var(--pawn-transform-transition-timing-function); // Ajout transition pour l'ombre
+
+  width: var(--pawn-actual-size);
+  height: var(--pawn-actual-size);
+  border-radius: 50%; // Assure une forme parfaitement ronde
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // La couleur de fond du pion est appliquée via [ngStyle]="pawnStyle" dans le template HTML,
+  // héritant de teamData.color
+
+  // Ombres et bordure pour un effet 3D et une meilleure visibilité
+  box-shadow: var(--pawn-shadow-main), var(--pawn-shadow-inset);
+  border: var(--pawn-border-width) solid var(--pawn-border-color);
+
+  &:hover {
+    transform: scale(1.15) translateY(-4px); // Agrandissement et soulèvement plus prononcés
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3), var(--pawn-shadow-inset); // Ombre plus forte au survol
+    z-index: 21; // Passe au-dessus des autres pions
+  }
+}
+
+.pawn-icon-round {
+  font-size: var(--pawn-icon-display-size) !important; // Utiliser !important pour surcharger le font-size par défaut de mat-icon si besoin
+  width: var(--pawn-icon-display-size) !important;
+  height: var(--pawn-icon-display-size) !important;
+  color: var(--pawn-icon-color);
+  line-height: 1; // Assure un bon centrage vertical de l'icône
+  text-shadow: var(--pawn-icon-text-shadow); // Essaie avec text-shadow
+}

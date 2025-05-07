@@ -1,1 +1,63 @@
-/* You can add global styles to this file, and also import other style files */
+// src/styles.scss
+
+// --- Variables CSS Globales ---
+:root {
+  // Palette de base
+  --text-color-light: #eceff1;          // Texte clair principal
+  --text-color-medium: #b0bec5;         // Texte secondaire, placeholders
+  --text-color-dark: #263238;           // Texte sur fonds clairs (si besoin)
+
+  // Fonds
+  --bg-color-page: #212121;            // Fond général de la page/application (très sombre)
+  --bg-color-surface: #263238;         // Fond pour les surfaces principales comme la control-bar
+  --bg-color-card: #37474f;            // Fond pour les cartes, éléments surélevés
+  --bg-color-input: #455a64;           // Fond pour les champs de saisie
+
+  // Bordures
+  --border-color-light: #546e7a;        // Bordure discrète sur fonds sombres
+  --border-color-focus: #42a5f5;        // Bordure pour l'état focus (bleu)
+
+  // Couleurs d'accentuation
+  --accent-color-primary: #42a5f5;      // Bleu principal (peut être utilisé pour le focus aussi)
+  --accent-color-primary-hover: #2980b9;
+  --accent-color-secondary: #5cb85c;    // Vert (ajout, succès)
+  --accent-color-secondary-hover: #4cae4c;
+  --accent-color-danger: #ef5350;       // Rouge (suppression, erreur)
+  --accent-color-danger-hover: #e53935;
+  --accent-color-warning: #f39c12;      // Orange (reset, attention)
+  --accent-color-warning-hover: #e67e22;
+
+  // Rayons de bordure
+  --border-radius-small: 4px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px; // Pour des éléments plus grands si besoin
+  --border-radius-round: 50%;
+
+  // Ombres
+  --box-shadow-soft: 0 1px 3px rgba(0,0,0,0.15); // Ombre légère
+  --box-shadow-medium: 0 3px 6px rgba(0,0,0,0.2);  // Ombre standard
+  --box-shadow-strong: 0 5px 15px rgba(0,0,0,0.3); // Ombre prononcée (pour les popups par ex)
+
+  // Dimensions spécifiques (tu peux en ajouter au besoin)
+  --control-bar-min-height: 50px;
+  --control-bar-max-height: 160px;
+
+  // Variables pour le panneau mat-select (utilisées plus bas)
+  --panel-bg-color: var(--bg-color-card);        // Le panneau aura le même fond qu'une carte
+  --panel-border-color: var(--border-color-light);
+  --panel-option-text-color: var(--text-color-light);
+  --panel-option-hover-bg-color: var(--input-bg-color); // Un peu plus clair que le fond du panneau
+  --panel-option-hover-text-color: var(--text-color-light); // Garder le texte clair
+}
+
+// --- Styles Globaux de Base ---
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Poppins, sans-serif;
+  background-color: var(--bg-color-page); // Appliquer le fond de page global
+  color: var(--text-color-light); // Couleur de texte par défaut pour l'application
+}
+

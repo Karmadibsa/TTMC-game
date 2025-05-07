@@ -1,0 +1,9 @@
+// src/app/app.component.scss ou src/styles.scss
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Poppins, sans-serif; // Police de base
+  overflow: hidden; // Pour éviter les barres de défilement sur la page entière
+}

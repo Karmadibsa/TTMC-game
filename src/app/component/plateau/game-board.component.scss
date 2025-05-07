@@ -1,0 +1,34 @@
+// src/app/components/game-board/game-board.component.scss
+
+// Conteneur global qui inclut le plateau ET la barre de contrôle
+.game-board-outer-container {
+  display: flex;
+  flex-direction: column; // Plateau au-dessus, barre en dessous
+  width: 100vw;
+  height: 100vh;
+  background-color: #4f4c4c; // Un fond pour toute la page
+  overflow: hidden; // Empêche les barres de défilement globales inutiles
+}
+
+// Conteneur pour le plateau de jeu lui-même
+.game-board-container {
+  flex-grow: 1; // Prend la majorité de l'espace vertical
+  display: flex; // Pour centrer le board-grid si besoin, ou pour gérer le padding
+  padding: 15px; // Espace autour du plateau
+  box-sizing: border-box;
+  overflow: hidden; // Si le board-grid devait déborder, ce conteneur gère
+}
+
+.board-grid {
+  width: 100%; // Prend toute la largeur du game-board-container
+  height: 100%; // Prend toute la hauteur du game-board-container
+  display: grid;
+  // grid-template-columns et grid-template-rows seront définis par [ngStyle]="boardStyle"
+  gap: 8px;
+  padding: 10px; // Padding à l'intérieur de la grille, entre les cases et le bord de la grille
+  box-sizing: border-box;
+  position: relative; // Contexte pour les pions en position absolue
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  overflow: auto; // Permet de scroller si le contenu de la grille est trop grand (ex: zoom)
+}
