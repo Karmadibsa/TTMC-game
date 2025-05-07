@@ -2,7 +2,7 @@
 import {inject, Injectable} from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Team } from '../models/team.model';
-import {Case, CASE_THEMES, CaseTheme, CaseType} from '../models/case.model';
+import {Case, CASE_THEMES, CaseShapeType, CaseTheme, CaseType} from '../models/case.model';
 import { BoardConfig } from '../models/board.model';
 import {SweetAlertService} from '../service/sweetalert.service';
 
@@ -51,11 +51,15 @@ export class GameService {
     this.boardConfig.cases = this.generateThemedSerpentineBoard(this.actualNumberOfCasesOnBoard);
   }
 
+  // Assurez-vous que CaseShapeType est bien importé et que Case a une propriété 'shape'
+// import { Case, CaseType, CASE_THEMES, CaseTheme, CaseShapeType } from '../interfaces/case.interface';
+
   private generateThemedSerpentineBoard(numberOfCases: number): Case[] {
     const cases: Case[] = [];
-    const cols = this.boardConfig.numberOfColumns;
-    const rowsTotal = this.boardConfig.numberOfRows;
+    const cols = this.boardConfig.numberOfColumns; // Nombre de colonnes
+    const rowsTotal = this.boardConfig.numberOfRows; // Nombre total de lignes (calculé ou fixe)
 
+    // Votre séquence de types de cases
     const regularCaseTypesSequence: CaseType[] = [
       CaseType.PLAISIR, CaseType.SCOLAIRE, CaseType.MATURE, CaseType.IMPROBABLE,
       CaseType.PLAISIR, CaseType.SCOLAIRE, CaseType.AXEL, CaseType.IMPROBABLE, CaseType.MATURE,
@@ -63,34 +67,38 @@ export class GameService {
     const intrepideCaseIds: number[] = [5, 12, 19, 26, 33, 39].filter(id => id < numberOfCases);
 
     for (let i = 0; i < numberOfCases; i++) {
-      const caseId = i;
+      const caseId = i; // Utilisation de l'index 0 pour les calculs de position
       let caseType!: CaseType;
       let caseTitle!: string;
       let isSpecialAction = false;
-      let directionIndicator: 'left' | 'right' | 'down' | undefined = undefined;
+      let shape: CaseShapeType = CaseShapeType.NORMAL; // Initialisation de la forme
 
-      const row0 = Math.floor(caseId / cols);
-      let col0: number;
+      const row0 = Math.floor(caseId / cols); // Ligne 0-indexée
+      let col0Logical: number; // Colonne 0-indexée sur la ligne logique (avant serpentin)
+      let col0Visual: number;  // Colonne 0-indexée visuelle (après serpentin)
 
-      if (row0 % 2 === 0) { // Ligne paire: Gauche -> Droite
-        col0 = caseId % cols;
+      const isEvenRow = row0 % 2 === 0; // Ligne paire (0, 2, 4...) va de Gauche -> Droite
+
+      if (isEvenRow) { // Ligne paire: Gauche -> Droite
+        col0Logical = caseId % cols;
+        col0Visual = col0Logical;
       } else { // Ligne impaire: Droite -> Gauche
-        col0 = cols - 1 - (caseId % cols);
+        col0Logical = caseId % cols;
+        col0Visual = cols - 1 - (caseId % cols);
       }
 
-      // Détermination du type et du titre, EN DONNANT LA PRIORITÉ AUX CASES SPÉCIALES (DÉPART ET FIN)
+      // Détermination du type et du titre
       if (caseId === 0) {
         caseType = CaseType.START;
         caseTitle = "Départ";
-      } else if (caseId === numberOfCases - 1) { // Condition pour la DERNIÈRE case
+      } else if (caseId === numberOfCases - 1) {
         caseType = CaseType.FINAL_CHALLENGE;
         caseTitle = "N'hésite pas à gagner";
-        directionIndicator = (row0 % 2 === 0) ? 'right' : 'left'; // Ajustement ici
       } else if (intrepideCaseIds.includes(caseId)) {
         caseType = CaseType.INTREPIDE;
         caseTitle = caseType.toString();
         isSpecialAction = true;
-      } else { // Cases normales
+      } else {
         const specialCasesBeforeThis = 1 + intrepideCaseIds.filter(id => id < caseId).length;
         const normalCaseIndex = Math.max(0, caseId - specialCasesBeforeThis);
         const sequenceIndex = normalCaseIndex % regularCaseTypesSequence.length;
@@ -98,39 +106,112 @@ export class GameService {
         caseTitle = caseType.toString();
       }
 
-      // Gestion des flèches (sauf pour la dernière case, déjà gérée)
-      if (caseId < numberOfCases - 1) {
-        if (row0 % 2 === 0) { // Ligne paire: Gauche -> Droite
-          if (col0 < cols - 1) directionIndicator = 'right';
-          else if (row0 < rowsTotal - 1) directionIndicator = 'down';
-        } else { // Ligne impaire: Droite -> Gauche
-          if (col0 > 0) directionIndicator = 'left';
-          else if (row0 < rowsTotal - 1) directionIndicator = 'down';
+      // --- Détermination de la forme (shape) ---
+      const isFirstCaseInRow = col0Logical === 0;
+      const isLastCaseInRow = col0Logical === cols - 1;
+      const isLastRow = row0 === rowsTotal - 1; // ou Math.floor((numberOfCases -1) / cols)
+
+      if (caseId === 0) { // Toute première case du jeu
+        if (numberOfCases === 1) shape = CaseShapeType.NORMAL; // Plateau 1x1
+        else shape = CaseShapeType.START_RIGHT; // Commence toujours vers la droite
+      } else if (caseId === numberOfCases - 1) { // Toute dernière case du jeu
+        if (numberOfCases === 1) shape = CaseShapeType.NORMAL;
+        else if (isEvenRow) shape = CaseShapeType.END_RIGHT; // Fin de ligne G->D
+        else shape = CaseShapeType.END_LEFT;      // Fin de ligne D->G
+      } else { // Cases intermédiaires
+        if (isEvenRow) { // Ligne Gauche -> Droite
+          if (isFirstCaseInRow) shape = CaseShapeType.START_RIGHT;
+          else if (isLastCaseInRow) {
+            // Si c'est la fin d'une ligne mais pas la dernière ligne, on ne veut pas de END_RIGHT
+            // car elle doit connecter vers le bas (la forme POINTS_RIGHT gère cela visuellement)
+            shape = isLastRow ? CaseShapeType.END_RIGHT : CaseShapeType.POINTS_RIGHT;
+          }
+          else shape = CaseShapeType.POINTS_RIGHT;
+        } else { // Ligne Droite -> Gauche
+          if (isFirstCaseInRow) shape = CaseShapeType.START_LEFT; // En fait la "fin" visuelle de la progression D->G pour cette ligne
+          else if (isLastCaseInRow) {
+            // Si c'est la fin d'une ligne (visuellement à droite) mais pas la dernière ligne
+            shape = isLastRow ? CaseShapeType.END_LEFT : CaseShapeType.POINTS_LEFT;
+          }
+          else shape = CaseShapeType.POINTS_LEFT;
         }
       }
 
-      //Avant derniere case
-      if (caseId === numberOfCases - 2 && directionIndicator === 'down') { // Avant-dernière case
-        if (Math.floor((numberOfCases - 1) / cols) === row0) { // Si la dernière case est sur la même ligne
-          directionIndicator = (row0 % 2 === 0) ? 'right' : 'left';
-        } // Sinon, la flèche 'down' (si applicable) est déjà correcte
+      // Correction pour les "coins" où la direction change vers le bas.
+      // Une case en fin de ligne (mais pas la dernière du plateau) devrait ressembler à une case intermédiaire
+      // pour que la "pointe" s'emboîte avec la case du dessous si elle continue.
+      // Cette logique est complexe si on veut des flèches vers le bas. Pour l'emboîtement pur,
+      // on peut simplifier: une fin de ligne est toujours END_*, un début de ligne START_*.
+      // L'exemple actuel est plus simple: START, POINTS, END.
+
+      // Si la case suivante est sur la ligne du dessous, la case actuelle est une "fin" de sa direction horizontale
+      // mais doit visuellement s'emboîter avec le "début" de la case du dessous.
+      // La logique de `POINTS_RIGHT` et `POINTS_LEFT` est conçue pour avoir une entaille et une pointe.
+      // `END_RIGHT` a une entaille à gauche et un bord droit. `START_RIGHT` a un bord gauche et une pointe à droite.
+
+      // Pour la dernière case d'une ligne qui n'est PAS la dernière ligne du plateau:
+      if (!isLastRow && isLastCaseInRow && caseId < numberOfCases -1) {
+        if (isEvenRow) { // Fin de ligne G->D, va descendre
+          // La case a une pointe à droite (POINTS_RIGHT), la case en dessous aura une entaille à gauche (START_LEFT)
+          // Cela ne s'emboîte pas directement.
+          // On pourrait vouloir que la case de fin de ligne G->D ait une forme "END_RIGHT"
+          // et la case en dessous sur la ligne D->G commence par "START_LEFT".
+          // La logique actuelle est:
+          // Ligne 1: START_R, POINTS_R, ..., POINTS_R (ou END_R si dernière ligne)
+          // Ligne 2: START_L, POINTS_L, ..., POINTS_L (ou END_L si dernière ligne)
+          //
+          // Cela signifie qu'une case POINTS_RIGHT (entaille G, pointe D) serait suivie par
+          // une case START_LEFT (bord D, pointe G). Ils s'emboîtent.
+          //
+          // Donc, la logique pour isLastCaseInRow est correcte pour l'emboîtement.
+          // Si isLastCaseInRow ET isEvenRow -> END_RIGHT
+          // Si isLastCaseInRow ET !isEvenRow -> END_LEFT
+          // Si isFirstCaseInRow ET isEvenRow -> START_RIGHT
+          // Si isFirstCaseInRow ET !isEvenRow -> START_LEFT
+
+          // Réevaluation de la forme pour les fins de ligne qui ne sont pas la fin du plateau
+          if (isEvenRow) shape = CaseShapeType.END_RIGHT;
+          else shape = CaseShapeType.END_LEFT;
+
+        }
       }
+      // Et pour la première case d'une ligne qui n'est PAS la première ligne du plateau
+      if (row0 > 0 && isFirstCaseInRow && caseId < numberOfCases -1 ) {
+        if (isEvenRow) shape = CaseShapeType.START_RIGHT;
+        else shape = CaseShapeType.START_LEFT;
+      }
+
+      // S'assurer que la toute première et toute dernière case ont priorité
+      if (caseId === 0) {
+        if (numberOfCases === 1) shape = CaseShapeType.NORMAL;
+        else shape = CaseShapeType.START_RIGHT;
+      } else if (caseId === numberOfCases - 1) {
+        if (numberOfCases === 1) shape = CaseShapeType.NORMAL;
+        else if (isEvenRow) shape = CaseShapeType.END_RIGHT;
+        else shape = CaseShapeType.END_LEFT;
+      }
+
 
       const theme: CaseTheme | undefined = CASE_THEMES[caseType];
       if (!theme) { console.error(`Thème manquant pour ${caseType} (ID: ${caseId}).`); }
 
       const gridRowStartCSS = row0 + 1;
-      const gridColStartCSS = col0 + 1;
+      const gridColStartCSS = col0Visual + 1; // Utilisation de la colonne visuelle
 
       cases.push({
-        id: caseId, title: caseTitle, type: caseType,
+        id: caseId + 1, // ID 1-indexé pour la logique externe
+        title: caseTitle,
+        type: caseType,
         theme: theme || CASE_THEMES[CaseType.IMPROBABLE], // Thème de repli
         gridArea: `${gridRowStartCSS} / ${gridColStartCSS} / ${gridRowStartCSS + 1} / ${gridColStartCSS + 1}`,
-        isSpecialAction: isSpecialAction, directionIndicator: directionIndicator
+        isSpecialAction: isSpecialAction,
+        shape: shape, // Assignation de la forme calculée
+        // directionIndicator: directionIndicator, // Supprimé car remplacé par 'shape'
       });
     }
     return cases;
   }
+
 
 
   getBoardConfig(): Readonly<BoardConfig> { return this.boardConfig; }

@@ -16,19 +16,6 @@ export interface CaseTheme {
   icon?: string;
   textColor?: string;
   titleFontSize?: string; // Pour spécifier la taille de la police du titre
-  overlayImage?: string; // Optionnel, si vous voulez toujours un overlay par-dessus
-  overlayPosition?: string;
-}
-
-// Types de formes pour les cases
-export enum CaseShapeType {
-  NORMAL = 'normal', // Rectangulaire classique
-  POINTS_RIGHT = 'points-right', // Entaille à gauche, pointe à droite (pour progression G -> D)
-  POINTS_LEFT = 'points-left',   // Pointe à gauche, entaille à droite (pour progression D -> G)
-  START_RIGHT = 'start-right', // Rectangle à gauche, pointe à droite (début de ligne G -> D)
-  END_RIGHT = 'end-right',     // Entaille à gauche, rectangle à droite (fin de ligne G -> D)
-  START_LEFT = 'start-left',   // Rectangle à droite, pointe à gauche (début de ligne D -> G)
-  END_LEFT = 'end-left'        // Entaille à droite, rectangle à gauche (fin de ligne D -> G)
 }
 
 export const CASE_THEMES: Record<CaseType, CaseTheme> = {
@@ -90,5 +77,5 @@ export interface Case {
   gridArea: string;
   theme: CaseTheme;
   isSpecialAction?: boolean;
-  shape: CaseShapeType;   // La forme géométrique de la case
+  directionIndicator?: 'left' | 'right' | 'up' | 'down';
 }

@@ -2,24 +2,17 @@
 @if (caseData) {
   <div
     class="case"
-    [ngClass]="[getCaseClasses(), caseData.shape ? 'shape-' + caseData.shape : '']"
+    [ngClass]="getCaseClasses()"
     [style.background]="caseData.theme.background"
-    [style.color]="caseData.theme.textColor || '#333'"
+    [style.color]="caseData.theme.textColor"
     [style.grid-area]="caseData.gridArea"
     [title]="caseData.type + (caseData.isSpecialAction ? ' (Action)' : '')">
 
-  <div class="case-content">
-    <span
-      class="case-title"
-      [style.font-size]="caseData.theme.titleFontSize || '1em'">
-        {{ caseData.title }}
-      </span>
-  </div>
+  <span
+    class="case-title"
+    [style.font-size]="caseData.theme.titleFontSize || '1em'">
+    {{ caseData.title }}
+    </span>
 
-  @if (caseData.theme.overlayImage) {
-    <div class="case-overlay"
-         [style.background-image]="'url(' + caseData.theme.overlayImage + ')'">
-    </div>
-  }
   </div>
 }
