@@ -24,7 +24,7 @@
   height: 100%; // Prend toute la hauteur du game-board-container
   display: grid;
   // grid-template-columns et grid-template-rows seront définis par [ngStyle]="boardStyle"
-  gap: 8px;
+  row-gap: 20px;
   padding: 10px; // Padding à l'intérieur de la grille, entre les cases et le bord de la grille
   box-sizing: border-box;
   position: relative; // Contexte pour les pions en position absolue
