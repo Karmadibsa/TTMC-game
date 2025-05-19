@@ -1,59 +1,53 @@
-# TTMCFront
+# TTMC - Jeu de Société Virtuel
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.4.
+## Description
 
-## Development server
+Cette application web est une adaptation virtuelle du jeu de société "Tu Te Mets Combien ?" (TTMC). Le but du jeu est de progresser sur un plateau en répondant à des questions de culture générale et en évaluant ses connaissances sur différents sujets.
 
-To start a local development server, run:
+## Fonctionnalités
 
-```bash
-ng serve
+*   Plateau de jeu interactif
+*   Gestion des joueurs
+*   Suivi des scores
+
+
+## Prérequis
+
+*   Node.js et npm installés
+*   Angular CLI installé (`npm install -g @angular/cli`)
+
+## Installation
+
+1.  Cloner le dépôt: `git clone [URL du dépôt]`
+2.  Se rendre dans le répertoire du projet: `cd [nom du projet]`
+3.  Installer les dépendances: `npm install`
+
+## Développement
+
+1.  Lancer le serveur de développement: `ng serve`
+2.  Ouvrir l'application dans votre navigateur à l'adresse `http://localhost:4200/`
+
+Le code sera automatiquement rechargé à chaque modification des fichiers source.
+
+## Construction
+
+Pour construire l'application pour la production :
+
+```
+ng build --prod
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Les fichiers de construction seront stockés dans le répertoire `dist/`.
 
-## Code scaffolding
+## Aide
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Pour plus d'informations sur Angular CLI, utiliser la commande `ng help` ou consulter la documentation officielle.
 
-```bash
-ng generate component component-name
-```
+## Auteur
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+*   Axel MOMPER
 
-```bash
-ng generate --help
-```
+## Liens
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+*   Jeu en ligne : [https://ttmc-game.netlify.app/](https://ttmc-game.netlify.app/)
+*   Dépôt GitHub : [https://github.com/Karmadibsa/TTMC-game](https://github.com/Karmadibsa/TTMC-game)
