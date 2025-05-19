@@ -32,7 +32,7 @@ export class SweetAlertService {
       text: message,
       icon: type,
       // Ajuster les couleurs des boutons si nécessaire
-      confirmButtonColor: type === 'error' ? 'var(--accent-color-red)' : 'var(--accent-color-blue)',
+      confirmButtonColor: type === 'error' ? 'var(--accent-color-danger)' : 'var(--accent-color-primary)',
     };
     return Swal.fire(options);
   }
@@ -106,8 +106,8 @@ export class SweetAlertService {
       text: text,
       icon: 'warning', // Icône standard pour confirmation
       showCancelButton: true,
-      confirmButtonColor: 'var(--accent-color-blue)', // On peut ajuster si l'action est "dangereuse"
-      cancelButtonColor: 'var(--accent-color-red)',    // Inverser ? Rouge pour Annuler ? Ou garder standard
+      confirmButtonColor: 'var(--accent-color-primary)', // On peut ajuster si l'action est "dangereuse"
+      cancelButtonColor: 'var(--accent-color-danger)',    // Inverser ? Rouge pour Annuler ? Ou garder standard
       confirmButtonText: confirmButtonText,
       cancelButtonText: cancelButtonText,
       // returnFocus: false, // Décommenter si problèmes de focus après fermeture
