@@ -46,9 +46,21 @@
   border: var(--pawn-border-width) solid var(--pawn-border-color);
 
   &:hover {
-    transform: scale(1.15) translateY(-4px); // Agrandissement et soulèvement plus prononcés
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3), var(--pawn-shadow-inset); // Ombre plus forte au survol
-    z-index: 21; // Passe au-dessus des autres pions
+    transform: scale(1.15) translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3), var(--pawn-shadow-inset);
+    z-index: 21;
+  }
+
+  &.is-dragging {
+    // Désactiver l'animation de position pendant le drag (fluidité)
+    transition: transform var(--pawn-transform-transition-duration) var(--pawn-transform-transition-timing-function),
+                box-shadow var(--pawn-transform-transition-duration) var(--pawn-transform-transition-timing-function) !important;
+    transform: scale(1.25) translateY(-6px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.5), var(--pawn-shadow-inset);
+    z-index: 50;
+    cursor: grabbing;
+    opacity: 0.92;
+    filter: brightness(1.15);
   }
 }
 

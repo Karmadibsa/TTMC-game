@@ -2,8 +2,9 @@
 @if (teamData) {
   <div
     class="pawn-container-round"
+    [ngClass]="{'is-dragging': isDragging}"
     [ngStyle]="pawnStyle"
-    [title]="teamData.name + ' (Pion)'">
+    [title]="teamData.name + ' — glisser pour déplacer'">
     <mat-icon class="pawn-icon-round">{{ teamData.icon }}</mat-icon>
   </div>
 }

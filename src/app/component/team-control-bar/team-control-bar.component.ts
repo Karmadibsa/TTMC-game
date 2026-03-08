@@ -18,14 +18,19 @@ import {IconSelectorComponent} from '../icon-selector/icon-selector.component'; 
 })
 export class TeamControlBarComponent {
   @Input() teams: Team[] = [];
+  @Input() showAxelCases: boolean = false;
 
   @Output() addTeamRequest = new EventEmitter<void>();
-  @Output() updateTeamIconRequest = new EventEmitter<{ id: number; icon: string }>(); // Nouvel Output
+  @Output() toggleAxelCasesRequest = new EventEmitter<void>();
+  @Output() regenerateBoardRequest = new EventEmitter<void>();
+  @Output() updateTeamIconRequest = new EventEmitter<{ id: number; icon: string }>();
   @Output() removeTeamRequest = new EventEmitter<number>();
   @Output() updateTeamNameRequest = new EventEmitter<{ id: number; name: string }>();
   @Output() updateTeamColorRequest = new EventEmitter<{ id: number; color: string }>();
   @Output() moveTeamRequest = new EventEmitter<{ teamId: number; steps: number }>();
-  @Output() resetTeamsRequest = new EventEmitter<void>(); // Nouvel Output
+  @Output() resetTeamsRequest = new EventEmitter<void>();
+
+  showSettingsModal = false;
 
   // Injection du service SweetAlertService
   private sweetAlertService = inject(SweetAlertService);
@@ -59,5 +64,22 @@ export class TeamControlBarComponent {
 
   onTeamIconChange(teamId: number, newIcon: string): void {
     this.updateTeamIconRequest.emit({ id: teamId, icon: newIcon });
+  }
+
+  onToggleAxelCases(): void {
+    this.toggleAxelCasesRequest.emit();
+  }
+
+  onOpenSettings(): void {
+    this.showSettingsModal = true;
+  }
+
+  onCloseSettings(): void {
+    this.showSettingsModal = false;
+  }
+
+  onRegenerateBoard(): void {
+    this.regenerateBoardRequest.emit();
+    this.showSettingsModal = false;
   }
 }

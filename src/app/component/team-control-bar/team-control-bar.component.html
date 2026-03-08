@@ -11,8 +11,6 @@
           class="team-name-input-header"
           placeholder="Nom de l'équipe...">
 
-
-        <!-- 2. Sélecteurs de couleur et d'icône -->
         <div class="pickers-container">
           <label class="color-picker-label-simple" [style.background-color]="team.color" title="Changer la couleur">
             <input
@@ -27,7 +25,6 @@
           </app-icon-selector>
         </div>
 
-        <!-- 3. & 4. Actions de déplacement et bouton de suppression sur la même ligne -->
         <div class="team-actions-row">
           <div class="move-controls">
             <button (click)="onMoveTeamStep(team.id, -1)" class="action-btn step-btn decrease-btn" title="Reculer d'une case">
@@ -44,7 +41,7 @@
           </div>
 
           <button (click)="onRemoveTeam(team.id, team.name)" class="action-btn remove-btn-icon-only" title="Supprimer cette équipe">
-            <mat-icon>delete_outline</mat-icon> <!-- Icône poubelle -->
+            <mat-icon>delete_outline</mat-icon>
           </button>
         </div>
 
@@ -54,7 +51,7 @@
     }
   </div>
 
-  <!-- ... (boutons globaux d'ajout et reset - inchangés) ... -->
+  <!-- Actions globales -->
   <div class="global-actions-container">
     <button
       (click)="onAddTeam()"
@@ -70,5 +67,53 @@
       aria-label="Réinitialiser toutes les équipes">
       <mat-icon>refresh</mat-icon>
     </button>
+    <button
+      (click)="onOpenSettings()"
+      class="settings-global-btn-styled"
+      title="Paramètres"
+      aria-label="Ouvrir les paramètres">
+      <mat-icon>settings</mat-icon>
+    </button>
   </div>
 </div>
+
+<!-- Modal Paramètres -->
+@if (showSettingsModal) {
+  <div class="settings-modal-overlay" (click)="onCloseSettings()">
+    <div class="settings-modal-card" (click)="$event.stopPropagation()">
+      <div class="settings-modal-header">
+        <span class="settings-modal-title">
+          <mat-icon>settings</mat-icon>
+          Paramètres
+        </span>
+        <button class="settings-modal-close" (click)="onCloseSettings()" title="Fermer">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="settings-modal-body">
+        <!-- Toggle Cases d'Axel -->
+        <div class="setting-row">
+          <div class="setting-row-info">
+            <span class="setting-row-label">Cases d'Axel</span>
+            <span class="setting-row-desc">Ajoute les cases spéciales Axel sur le plateau</span>
+          </div>
+          <span class="toggle-switch" [class.active]="showAxelCases" (click)="onToggleAxelCases()">
+            <span class="toggle-knob"></span>
+          </span>
+        </div>
+
+        <!-- Régénérer le plateau -->
+        <div class="setting-row">
+          <div class="setting-row-info">
+            <span class="setting-row-label">Régénérer le plateau</span>
+            <span class="setting-row-desc">Mélange à nouveau l'ordre des cases</span>
+          </div>
+          <button class="regen-btn" (click)="onRegenerateBoard()" title="Régénérer le plateau">
+            <mat-icon>shuffle</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

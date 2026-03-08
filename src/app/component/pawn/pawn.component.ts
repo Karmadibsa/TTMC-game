@@ -1,26 +1,24 @@
 // src/app/components/pawn/pawn.component.ts
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Team } from '../../models/team.model';
-import {NgStyle} from '@angular/common';
-import {MatIcon} from '@angular/material/icon';
+import { NgClass, NgStyle } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-pawn',
   templateUrl: './pawn.component.html',
-  imports: [
-    NgStyle,
-    MatIcon
-  ],
+  imports: [NgStyle, NgClass, MatIcon],
   styleUrls: ['./pawn.component.scss']
 })
 export class PawnComponent implements OnChanges {
-  @Input() teamData!: Team; // Contient maintenant teamData.icon
+  @Input() teamData!: Team;
   @Input() position!: { x: number; y: number };
+  @Input() isDragging: boolean = false;
 
   pawnStyle: any = {};
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['position'] ||
+    if (changes['position'] || changes['isDragging'] ||
       (changes['teamData'] &&
         (changes['teamData'].currentValue?.color !== changes['teamData'].previousValue?.color ||
           changes['teamData'].currentValue?.icon !== changes['teamData'].previousValue?.icon)
@@ -35,7 +33,7 @@ export class PawnComponent implements OnChanges {
       this.pawnStyle = {
         'background-color': this.teamData.color,
         'left.px': this.position.x,
-        'top.px': this.position.y
+        'top.px': this.position.y,
       };
     }
   }

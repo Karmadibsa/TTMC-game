@@ -6,12 +6,12 @@
     [style.background]="caseData.theme.background"
     [style.color]="caseData.theme.textColor"
     [style.grid-area]="caseData.gridArea"
-    [title]="caseData.type + (caseData.isSpecialAction ? ' (Action)' : '')">
+    [title]="caseData.type + (caseData.isSpecialAction ? ' (Action spéciale !)' : '')">
 
-  <span
-    class="case-title"
-    [style.font-size]="caseData.theme.titleFontSize || '1em'">
-    {{ caseData.title }}
+    <span
+      class="case-title"
+      [style.font-size]="caseData.theme.titleFontSize || '1em'">
+      {{ caseData.title }}
     </span>
 
   </div>

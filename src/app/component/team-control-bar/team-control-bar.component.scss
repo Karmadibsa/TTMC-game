@@ -2,15 +2,17 @@
 
 // --- Conteneur Principal de la Barre ---
 .control-bar-container {
-  background-color: var(--bg-color-surface); // Utilise la variable globale
+  background: rgba(30, 40, 48, 0.88);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 8px 15px;
   display: flex;
   align-items: center;
   gap: 15px;
   height: 100%;
-  min-height: var(--control-bar-min-height); // Utilise la variable globale
-  max-height: var(--control-bar-max-height); // Utilise la variable globale
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.3); // Peut aussi être une variable --box-shadow-top
+  min-height: var(--control-bar-min-height);
+  max-height: var(--control-bar-max-height);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   color: var(--text-color-light);
   overflow: hidden;
@@ -264,6 +266,192 @@ app-icon-selector {
   @extend .global-action-btn;
   background-color: var(--accent-color-warning); // Orange
   &:hover { background-color: var(--accent-color-warning-hover); }
+}
+
+// Bouton Paramètres Global
+.settings-global-btn-styled {
+  @extend .global-action-btn;
+  background-color: rgba(66, 165, 245, 0.25);
+  border: 1px solid rgba(66, 165, 245, 0.5);
+  color: #90caf9;
+  &:hover {
+    background-color: rgba(66, 165, 245, 0.45);
+    color: white;
+  }
+}
+
+// --- Modal Paramètres ---
+.settings-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+  animation: modal-fade-in 0.15s ease;
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.settings-modal-card {
+  background: rgba(20, 28, 40, 0.97);
+  border: 1px solid rgba(66, 165, 245, 0.25);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  width: 360px;
+  max-width: 90vw;
+  animation: modal-slide-up 0.18s ease;
+  overflow: hidden;
+}
+
+@keyframes modal-slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.settings-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.settings-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1em;
+  font-weight: 700;
+  color: #e0e8ff;
+  letter-spacing: 0.02em;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #90caf9;
+  }
+}
+
+.settings-modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+}
+
+.settings-modal-body {
+  padding: 12px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  &:last-child { border-bottom: none; }
+}
+
+.setting-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.setting-row-label {
+  font-size: 0.92em;
+  font-weight: 600;
+  color: #e0e8ff;
+}
+
+.setting-row-desc {
+  font-size: 0.75em;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.3;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  background-color: var(--bg-color-input);
+  border-radius: 12px;
+  border: 1px solid var(--border-color-light);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &.active {
+    background-color: var(--accent-color-primary);
+    border-color: var(--accent-color-primary);
+  }
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+
+  .toggle-switch.active & {
+    transform: translateX(20px);
+  }
+}
+
+.regen-btn {
+  background: rgba(66, 165, 245, 0.15);
+  border: 1px solid rgba(66, 165, 245, 0.4);
+  color: #90caf9;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+  &:hover {
+    background: rgba(66, 165, 245, 0.35);
+    color: white;
+    transform: rotate(30deg);
+  }
+  &:active { transform: rotate(180deg); }
 }
 
 // --- Message si Aucune Équipe ---

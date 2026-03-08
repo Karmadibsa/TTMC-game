@@ -1,34 +1,81 @@
 // src/app/components/game-board/game-board.component.scss
 
-// Conteneur global qui inclut le plateau ET la barre de contrôle
 .game-board-outer-container {
   display: flex;
-  flex-direction: column; // Plateau au-dessus, barre en dessous
+  flex-direction: column;
   width: 100vw;
   height: 100vh;
-  background-color: #4f4c4c; // Un fond pour toute la page
-  overflow: hidden; // Empêche les barres de défilement globales inutiles
+  background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 35%, #0d1b3e 70%, #111827 100%);
+  overflow: hidden;
+  position: relative;
 }
 
-// Conteneur pour le plateau de jeu lui-même
 .game-board-container {
-  flex-grow: 1; // Prend la majorité de l'espace vertical
-  display: flex; // Pour centrer le board-grid si besoin, ou pour gérer le padding
-  padding: 15px; // Espace autour du plateau
+  flex-grow: 1;
+  display: flex;
+  padding: 12px 15px 10px;
   box-sizing: border-box;
-  overflow: hidden; // Si le board-grid devait déborder, ce conteneur gère
+  overflow: hidden;
 }
 
 .board-grid {
-  width: 100%; // Prend toute la largeur du game-board-container
-  height: 100%; // Prend toute la hauteur du game-board-container
+  width: 100%;
+  height: 100%;
   display: grid;
-  // grid-template-columns et grid-template-rows seront définis par [ngStyle]="boardStyle"
   gap: 8px;
-  padding: 10px; // Padding à l'intérieur de la grille, entre les cases et le bord de la grille
+  padding: 10px;
   box-sizing: border-box;
-  position: relative; // Contexte pour les pions en position absolue
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  overflow: auto; // Permet de scroller si le contenu de la grille est trop grand (ex: zoom)
+  position: relative;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 0 40px rgba(66, 165, 245, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: auto;
+
+  &.board-dragging {
+    cursor: grabbing !important;
+    * { cursor: grabbing !important; }
+  }
 }
+
+// ----- Fil d'Ariane SVG -----
+.board-path-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: visible;
+}
+
+// Halo de fond : large trait flou bleu pour donner de la profondeur
+.board-path-halo {
+  fill: none;
+  stroke: rgba(80, 160, 255, 0.18);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// Ligne principale animée
+.board-path-line {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.65);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 6 10;
+  animation: path-flow 2s linear infinite;
+}
+
+@keyframes path-flow {
+  from { stroke-dashoffset: 48; }
+  to   { stroke-dashoffset: 0; }
+}
+

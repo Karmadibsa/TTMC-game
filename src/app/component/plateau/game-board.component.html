@@ -1,38 +1,60 @@
 <!-- src/app/components/game-board/game-board.component.html -->
 <div class="game-board-outer-container">
   <div class="game-board-container">
-    <!-- #boardGridElement est la référence pour calculer les positions précises des pions -->
-    <div class="board-grid" #boardGridElement [ngStyle]="boardStyle">
+    <div class="board-grid" #boardGridElement [ngStyle]="boardStyle"
+         [class.board-dragging]="draggingTeamId !== null">
 
-      <!-- Affichage des cases du plateau -->
-      <!-- Utilisation de la nouvelle syntaxe @for pour les cases -->
       @for (currentCase of cases; track currentCase.id) {
         <app-case [caseData]="currentCase"></app-case>
       } @empty {
-        <p>Chargement du plateau...</p> <!-- Message si les cases ne sont pas encore là -->
+        <p>Chargement du plateau...</p>
       }
 
-      <!-- Affichage des pions des équipes -->
-      <!-- Utilisation de la nouvelle syntaxe @for pour les pions -->
+      <!-- Fil d'Ariane animé -->
+      @if (boardPathD) {
+        <svg class="board-path-svg" aria-hidden="true">
+          <defs>
+            <!-- Filtre glow -->
+            <filter id="path-glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- Halo de fond (épaisseur + flou = effet lumineux) -->
+          <path [attr.d]="boardPathD" class="board-path-halo" />
+
+          <!-- Ligne principale animée -->
+          <path [attr.d]="boardPathD" class="board-path-line" filter="url(#path-glow)" />
+
+        </svg>
+      }
+
       @for (team of teams; track team.id) {
         <app-pawn
           [teamData]="team"
-          [position]="getPawnPosition(team.id)"> <!-- Passe team.id pour récupérer la position stockée -->
+          [position]="getPawnPosition(team.id)"
+          [isDragging]="draggingTeamId === team.id"
+          (mousedown)="onPawnMouseDown($event, team.id)">
         </app-pawn>
       }
-      <!-- Pas de @empty ici, car s'il n'y a pas d'équipes, rien ne s'affiche, ce qui est correct -->
     </div>
   </div>
 
-  <!-- Barre de contrôle des équipes -->
   <app-team-control-bar
     [teams]="teams"
+    [showAxelCases]="showAxelCases"
     (addTeamRequest)="handleAddNewTeamRequest()"
     (removeTeamRequest)="handleRemoveTeamRequest($event)"
     (updateTeamNameRequest)="handleUpdateTeamNameRequest($event)"
     (updateTeamColorRequest)="handleUpdateTeamColorRequest($event)"
     (moveTeamRequest)="handleMoveTeamRequest($event)"
     (updateTeamIconRequest)="handleUpdateTeamIconRequest($event)"
-    (resetTeamsRequest)="handleResetTeamsRequest()">
+    (resetTeamsRequest)="handleResetTeamsRequest()"
+    (toggleAxelCasesRequest)="handleToggleAxelCasesRequest()"
+    (regenerateBoardRequest)="handleRegenerateBoardRequest()">
   </app-team-control-bar>
 </div>

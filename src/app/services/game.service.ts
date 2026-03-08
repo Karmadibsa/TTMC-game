@@ -46,9 +46,23 @@ export class GameService {
   private readonly actualNumberOfCasesOnBoard = this.boardConfig.numberOfColumns * this.boardConfig.numberOfRows;
 
   private nextTeamId = 1;
+  private showAxelCases = false;
+  private boardCasesSubject = new BehaviorSubject<Case[]>([]);
+  boardCases$ = this.boardCasesSubject.asObservable();
 
   constructor() {
-    this.boardConfig.cases = this.generateThemedSerpentineBoard(this.actualNumberOfCasesOnBoard);
+    const cases = this.generateThemedSerpentineBoard(this.actualNumberOfCasesOnBoard);
+    this.boardConfig.cases = cases;
+    this.boardCasesSubject.next(cases);
+  }
+
+  getShowAxelCases(): boolean { return this.showAxelCases; }
+
+  setShowAxelCases(show: boolean): void {
+    this.showAxelCases = show;
+    const cases = this.generateThemedSerpentineBoard(this.actualNumberOfCasesOnBoard);
+    this.boardConfig.cases = cases;
+    this.boardCasesSubject.next(cases);
   }
 
   private generateThemedSerpentineBoard(numberOfCases: number): Case[] {
@@ -56,11 +70,24 @@ export class GameService {
     const cols = this.boardConfig.numberOfColumns;
     const rowsTotal = this.boardConfig.numberOfRows;
 
-    const regularCaseTypesSequence: CaseType[] = [
-      CaseType.PLAISIR, CaseType.SCOLAIRE, CaseType.MATURE, CaseType.IMPROBABLE,
-      CaseType.PLAISIR, CaseType.SCOLAIRE, CaseType.AXEL, CaseType.IMPROBABLE, CaseType.MATURE,
-    ];
     const intrepideCaseIds: number[] = [5, 12, 19, 26, 33, 39].filter(id => id < numberOfCases);
+    // Calcul du nombre de cases normales (hors START, FINAL, INTREPIDE)
+    const regularCaseCount = numberOfCases - 2 - intrepideCaseIds.length; // 34 pour un plateau 6x7
+
+    // Pool équilibré de types, mélangé aléatoirement
+    const baseTypes: CaseType[] = this.showAxelCases
+      ? [CaseType.PLAISIR, CaseType.SCOLAIRE, CaseType.MATURE, CaseType.IMPROBABLE, CaseType.AXEL]
+      : [CaseType.PLAISIR, CaseType.SCOLAIRE, CaseType.MATURE, CaseType.IMPROBABLE];
+
+    const pool: CaseType[] = [];
+    const fullCycles = Math.floor(regularCaseCount / baseTypes.length);
+    const remainder = regularCaseCount % baseTypes.length;
+    for (let c = 0; c < fullCycles; c++) pool.push(...baseTypes);
+    // Le reste est distribué équitablement (pas toujours les mêmes types)
+    const remainderTypes = this.shuffleArray([...baseTypes]).slice(0, remainder);
+    pool.push(...remainderTypes);
+    const shuffledPool = this.shuffleArray(pool);
+    let poolIndex = 0;
 
     for (let i = 0; i < numberOfCases; i++) {
       const caseId = i;
@@ -90,11 +117,8 @@ export class GameService {
         caseType = CaseType.INTREPIDE;
         caseTitle = caseType.toString();
         isSpecialAction = true;
-      } else { // Cases normales
-        const specialCasesBeforeThis = 1 + intrepideCaseIds.filter(id => id < caseId).length;
-        const normalCaseIndex = Math.max(0, caseId - specialCasesBeforeThis);
-        const sequenceIndex = normalCaseIndex % regularCaseTypesSequence.length;
-        caseType = regularCaseTypesSequence[sequenceIndex];
+      } else { // Cases normales — tirage depuis le pool mélangé
+        caseType = shuffledPool[poolIndex++];
         caseTitle = caseType.toString();
       }
 
@@ -282,6 +306,38 @@ export class GameService {
     const y = boardPadding + (logicalRow * (approxCellHeight + cellGap)) + (approxCellHeight / 2) - (pawnSize / 2);
 
     return { x, y };
+  }
+
+  private shuffleArray<T>(array: T[]): T[] {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  moveTeamToCase(teamId: number, caseId: number): void {
+    const maxPosition = this.actualNumberOfCasesOnBoard - 1;
+    const newPosition = Math.max(0, Math.min(caseId, maxPosition));
+    const currentTeams = this.teamsSubject.getValue();
+    let almostWonTeamName: string | null = null;
+    const updatedTeams = currentTeams.map(team => {
+      if (team.id === teamId) {
+        if (newPosition === maxPosition && this.boardConfig.cases[newPosition]?.type === CaseType.FINAL_CHALLENGE) {
+          almostWonTeamName = team.name;
+        }
+        return { ...team, position: newPosition };
+      }
+      return team;
+    });
+    this.teamsSubject.next(updatedTeams);
+    if (almostWonTeamName) {
+      this.sweetAlertService.showPopUp(
+        `L'équipe ${almostWonTeamName} est sur la case "${CaseType.FINAL_CHALLENGE}" ! Préparez-vous !`,
+        'info', 'Défi Final en Vue !'
+      );
+    }
   }
 
   resetAllTeams(): void {
